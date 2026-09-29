@@ -1,0 +1,24 @@
+# Раз в неделю Dependabot открывает pull request с обновлениями; тесты гоняются на нём автоматически.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      # Все dev-зависимости (wrangler, vitest, плагин) — одним PR, чтобы не было пачки мелких.
+      dev-dependencies:
+        dependency-type: development
+    ignore:
+      # Мажорную версию vitest поднимать вместе с @cloudflare/vitest-plugin, когда тот её поддержит
+      # (плагин 1.x требует vitest ^4.1.0, с vitest 5 npm ci падает с ERESOLVE).
+      - dependency-name: vitest
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ["*"]
